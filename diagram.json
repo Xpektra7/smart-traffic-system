@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "author": "Imran Ogungbayi",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-hc-sr04", "id": "ultrasonic1", "top": -94.5, "left": 159.1, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:5", "ultrasonic1:TRIG", "green", [ "h139.24", "v-115.2" ] ],
+    [ "esp:18", "ultrasonic1:ECHO", "green", [ "h148.84" ] ],
+    [ "esp:5V", "ultrasonic1:VCC", "red", [ "h-23.81", "v57.6", "h249.6", "v-19.2" ] ],
+    [ "esp:GND.2", "ultrasonic1:GND", "black", [ "v0", "h158.44" ] ]
+  ],
+  "dependencies": {}
+}
