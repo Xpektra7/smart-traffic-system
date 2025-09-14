@@ -1,11 +1,111 @@
+# Ultrasonic Traffic Detection (ESP32 + HC-SR04)
 
-This directory is intended for PlatformIO Test Runner and project tests.
+This project uses an **ultrasonic sensor (HC-SR04 or similar)** with an **ESP32** to monitor lane occupancy, count vehicles, and estimate relative speed of traffic.
+It’s designed to run in **fixed time windows** (e.g. 30 seconds), returning processed traffic metrics.
 
-Unit Testing is a software testing method by which individual units of
-source code, sets of one or more MCU program modules together with associated
-control data, usage procedures, and operating procedures, are tested to
-determine whether they are fit for use. Unit testing finds problems early
-in the development cycle.
+---
 
-More information about PlatformIO Unit Testing:
-- https://docs.platformio.org/en/latest/advanced/unit-testing/index.html
+## 🚦 Features
+
+* Measures distance 20 times per second (50 ms interval).
+* Auto-calibrates baseline distance (road surface).
+* Detects **vehicle presence** by tracking distance drop & rise.
+* Counts **vehicles** via rising/falling edges.
+* Calculates **lane occupancy ratio** (time occupied ÷ total window).
+* Estimates **average relative speed** of detected vehicles (not exact speed, but useful for fast/slow classification).
+
+---
+
+## 📊 Outputs
+
+After each run (window), the system reports:
+
+```
+---- Results ----
+Vehicle Count: 12
+Occupancy Ratio: 0.42
+Avg Speed: 1.37
+-----------------
+```
+
+---
+
+## 🔧 Hardware Setup
+
+* **ESP32 Devkit v1**
+* **Ultrasonic Sensor** (HC-SR04, JSN-SR04T, etc.)
+* Jumper wires
+
+**Wiring:**
+
+* `Trig` → ESP32 GPIO 5
+* `Echo` → ESP32 GPIO 18
+* `VCC` → 5V
+* `GND` → GND
+
+---
+
+## 💻 Code Usage (with Hardware)
+
+Clone repo and open in **PlatformIO** or **Arduino IDE**.
+
+```cpp
+UltrasonicResult res = runUltrasonicWindow(30, 5, 18);
+
+Serial.println("---- Results ----");
+Serial.print("Vehicle Count: "); Serial.println(res.vehicleCount);
+Serial.print("Occupancy Ratio: "); Serial.println(res.occupancyRatio, 2);
+Serial.print("Avg Speed: "); Serial.println(res.avgSpeed, 3);
+Serial.println("-----------------");
+```
+
+* `30` → measurement window in seconds
+* `5` → trigger pin
+* `18` → echo pin
+
+---
+
+## 🖥️ Run on Wokwi (No Hardware Required)
+
+You can simulate this project online using [Wokwi](https://wokwi.com).
+
+1. Fork/clone this repo.
+2. Open [https://wokwi.com/projects/new](https://wokwi.com/projects/new).
+3. Click **Import from GitHub** → paste your repo link.
+4. The simulation will load automatically using `diagram.json` and `wokwi.toml`.
+5. Press the **green ▶ Run** button to start the simulation.
+
+---
+
+## 📟 Serial Monitor (Wokwi)
+
+If you don’t have physical hardware, you can still view outputs:
+
+* In **Wokwi**, click on the **Serial Monitor** tab (right side).
+* Or if running locally via PlatformIO + Wokwi extension:
+
+  ```bash
+  pio device monitor -b 115200
+  ```
+
+---
+
+## ⚡ Limitations
+
+* Ultrasonic can only measure **vertical displacement** (height difference).
+* Speed estimation is **relative**, not absolute (use Doppler radar for true velocity).
+* Sensor performance affected by rain, wind, or sensor angle.
+
+---
+
+## 🛠️ Future Improvements
+
+* Add multi-sensor fusion (radar + ultrasonic).
+* Support multiple lanes.
+* Real-time streaming instead of fixed 30s windows.
+
+---
+
+## 📜 License
+
+MIT License – free to use and modify.
